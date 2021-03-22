@@ -11,8 +11,15 @@ export class PhotoService {
     private photoRepository: Repository<Photo>,
   ) {}
 
-  create(createPhotoDto: CreatePhotoDto) {
-    return 'This action adds a new photo';
+  async create(createPhotoDto: CreatePhotoDto) {
+    let photo = new Photo();
+    photo = {
+      ...photo,
+      ...createPhotoDto,
+      views: 0,
+    };
+    const newPhoto = await this.photoRepository.save(photo);
+    return newPhoto;
   }
 
   findAll() {
@@ -21,11 +28,23 @@ export class PhotoService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} photo`;
+    return this.photoRepository.findOne({ id });
   }
 
   update(id: number, updatePhotoDto: UpdatePhotoDto) {
     return `This action updates a #${id} photo`;
+  }
+
+  async markView(id: number) {
+    try {
+      const currentPhoto = await this.photoRepository.findOne(id);
+      await this.photoRepository.update(id, {
+        views: currentPhoto.views + 1,
+      });
+      return { success: true };
+    } catch (err) {
+      throw new Error(`Could not find the photo`);
+    }
   }
 
   remove(id: number) {

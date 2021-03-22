@@ -22,6 +22,11 @@ export class PhotoController {
     return this.photoService.findOne(+id);
   }
 
+  @Patch(':id/mark-view')
+  markView(@Param('id') id: string) {
+    return this.photoService.markView(Number(id));
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePhotoDto: UpdatePhotoDto) {
     return this.photoService.update(+id, updatePhotoDto);
